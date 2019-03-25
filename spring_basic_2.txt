@@ -1,0 +1,94 @@
+< 1. 스프링 기초 정리 2편 >
+
+1. MVC 프레임워크 구조
+ 1) 클라이언트 요청 -> DispatcherServlet
+ 2) DispatcherServlet -> HandlerMapping : 요청을 처리할 Controller 검색
+ 3) HandlerMapping -> DispatcherServlet -> HandlerAdapter
+ 4) HandlerAdapter -> Controller : adapter가 Controller내에 적합한 메서드를 검색. 요청 결과를 Model에 담는다.
+  4-1) Controller -> Service
+  4-2) Service -> DB
+  4-3) DB -> Servicee -> Controller -> HandlerAdapter -> DispatcherServlet
+ 5) DispatcherServlet -> ViewResolver : 요청 결과를 표시할 적합한 View 검색.
+ 6) ViewResolver -> DispatcherServlet -> View -> 클라이언트 : Model을 View에 표시하여 클라이언트에 응답
+
+
+
+2. Spring 초기 동작 프로세스
+ 1) WAS가 구동되면 web.xml가 로딩된다.
+ 2) web.xml에서 contextLoaderListener가 생성되며 root-context.xml이 로딩된다.
+ 3) root-context.xml에서 스프링 컨테이너가 구동된다. 이때 service, repository, DAO 등 객체가 생성된다.
+ 4) 클라이언트로 부터 첫 web-application 요청이 들어오면 dispatcherServlet이 생성되며 servlet-context.xml이 로딩된다.
+ 5) servlet-context.xml에서 controller와 viewResolver, handlerMapping 등이 설정된다.
+ 6) 설정이 완료되면 요청을 controller와 매핑해 요청을 처리한다.
+	
+Q) root-context와 servlet-context 차이
+둘 모두 스프링을 이루는 context 설정이다.
+root-context는 서비스 계층, DAO 등 비지니스, 서비스 로직과 관련된 객체를 설정한다.
+따라서 component-scan시 controller 는 exclude 해야 한다.
+servlet-context는 서블릿에서만 이용되는 context로, 요청과 관련된 객체(controller, viewResolver, interceptor 등)를 설정한다.
+따라서 component-scan시 service, repository 는 exclude 해야 한다.
+둘 모두에서 설정된 객체는 servlet-context를 우선한다.
+	* component-scan : 
+(참조 : https://jins-dev.tistory.com/entry/Spring-Framework-%EC%9D%98-%EA%B8%B0%EB%B3%B8%EB%8F%99%EC%9E%91-%EB%B0%8F-Dispatcher-Servlet?category=760012)
+
+
+
+3. web.xml
+* Web Application 의 환경 파일(Deployment Description)
+
+- XML 형식(XML Schema)의 파일로써, WEB-INF 폴더에 위치
+- <web-app> 태그로 시작하고 종료하는 문서로써 web.xml 이 정의 된 Web Application의 동작과 관련된 다양한 환경 정보를 태그 기반으로 설정하는 파일.
+- Servlet 2.3 까지 DTD 파일, 2.4 부터 XML Schema 파일 형태로 변경.
+ 
+
+- WEB.XML 파일의 구성 내용
+ 1) ServletContext의 초기 파라미터
+ 2) Session의 유효시간 설정
+ 3) Servlet/JSP에 대한 정의
+ 4) Servlet/JSP 매핑
+ 5) Mime Type 매핑
+ 6) Welcome File list
+ 7) Error Pages 처리
+ 8) Listen/Filter 설정
+ 9) 보안
+
+(참조 : https://ooz.co.kr/219?category=818548)
+ 
+
+ 
+4. java, xml 2가지 config 파일
+ 1) java config
+ @Configuration
+ @EnableWebMvc
+ @ComponentScan("package-name")
+ public class WebConfig { ... }
+
+ 2) xml config 
+ <!-- Annotati on 활성화 -->
+ <mvc:annotation-driven></mvc:annotation-driven> 
+ <!-- Component 패키지 지정 -->
+ <context:component-scan base-package="package-name"></context:component-scan>
+
+( 참조 : https://gmlwjd9405.github.io/2018/12/18/spring-annotation-enable.html)
+
+
+
+ 
+5. mvc:annotation-driven / context:component-scan / context:annotation-config 차이
+ 1) mvc:annotation-driven 태그
+ Spring MVC가 @Controller에 요청을 보내기 위해 필요한 HandlerMapping과 HandlerAdapter를 bean으로 등록한다.
+ 즉 Controller와 연관된 설정이다.
+ HandlerMapping : 요청 정보(URL)를 보고 매칭시킬 Controller를 찾아 연결한다.
+ HandlerAdapter : controller 실행 결과를 리턴한다. 
+
+ 2) context:component-scan 태그
+ 패키지를 스캔하여 @Component 어노테이션을(@Controller, @Service, @Repository 포함) 확인하여 bean 객체를 생성한다.
+ @Autowired와 @Qualifier 어노테이션을 인식한다.
+ 이 태그를 설정하면 context:annotation-config는 설정할 필요 없다. 
+
+ 3) context:annotation-config 태그
+ component-scan 태그 설정에서 bean 객체 생성 기능이 빠진 것.
+  생성된 bean들과 관련된 어노테이션을(@Configuration, @Autowired, @Qualifier) 활성화 한다.
+ 
+ 
+ 

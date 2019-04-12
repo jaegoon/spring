@@ -1,0 +1,27 @@
+﻿pdf.js를 Spring 웹 프로젝트에 적용하기
+
+
+1. pdf.js 란?
+웹 상에서 pdf 파일을 Adobe Reader를 통해 보는 것처럼 보여주는 viewer
+
+
+2.  pdf.js 구성
+- build : js를 구성하는 core 파일
+- web : viewer.html과 웹상에서 보여주고자 하는 pdf 파일
+
+** pdf.js will work with server environment only - offline testing on your local PC won't work.
+
+
+3. web 어플리케이션에 적용하기
+1) index.html이 있는 디렉토리에 pdf.js 전체를 복붙한다.
+2) viewer로 보고 싶은 pdf 파일을 web 디렉토리 안에 넣는다.
+3) href = "/web/viewer.html?file=pdf파일명.pdf" 로 viewer 실행 링크를 설정한다.
+
+
+4. Spring 적용하기
+1) html을 jsp로 변경
+2) js 파일 경로 수정
+3) JSTL C:URL 활용(WAS 모듈 path 설정에 관계없이 경로 설정되도록 도와준다.)하여 js 리소스로 추가
+4) viewer.js 일부 수정
+ - PDFViewerApplication 객체의 initialBookMark 속성 수정 (360줄 근처) - 처음 뜨워줄 페이지 설정
+ - webViewerInitialized 함수의 file 객체 수정 (1598줄 근처 ) - viewer에 띄울 pdf 파일경로 및 파일명 설정

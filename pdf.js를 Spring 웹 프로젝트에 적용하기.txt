@@ -2,7 +2,8 @@
 
 
 1. pdf.js 란?
-웹 상에서 pdf 파일을 Adobe Reader를 통해 보는 것처럼 보여주는 viewer
+웹 상에서 pdf 파일을 Adobe Reader를 통해 보는 것처럼 보여주는 viewer [오픈소스](https://mozilla.github.io/pdf.js/)다.
+해놓고 보니 기대 이상으로 깔끔하다.
 
 
 2.  pdf.js 구성

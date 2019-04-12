@@ -1,0 +1,42 @@
+html2canvas를 이용해 화면 캡쳐하기
+
+
+1. html2canvas 란?
+html 태그의 selector를 선택해 해당 selector의 내용을 스크린샷해서 URI로 변환해준다.
+자세한 내용은 https://html2canvas.hertzen.com/
+
+2. 사용방법
+매우 간단하다.
+
+1. 라이브러리 설정
+https://html2canvas.hertzen.com/에서 라이브러리를 다운받아 resource 디렉토리에 넣어 사용하거나
+jsp 헤더에 <script src="http://html2canvas.hertzen.com/dist/html2canvas.js"></script>를 추가하면 한다.
+
+2. 자바스크립트 코드
+
+var selector = "원하는 태그";
+// body태그 전체 스크린샷 원할 경우 : "body", 
+// div태그 스크린샷 원할 경우 : "#div 태그에 설정한 id"
+
+html2canvas(document.querySelector(selector)).then(function (canvas) {
+    		
+            var base64encodedstring = canvas.toDataURL("image/png");
+			
+}
+
+이렇게 하면 base64encodedstring 객체에 스크린샷 이미지 URL가 저장된다.
+
+1) 이를 바로 링크로 만들어 다운로드해도 되고
+	var link = document.createElement("a");
+	link.download = "다운로드할 파일명";
+	link.href = base64encodedstring;
+	document.body.appendChild(link);
+	link.click();
+	
+2) 스프링일 경우, AJAX를 통해 서버에 저장할 수도 있다.
+	var url = '<c:url value="/core/pdf/imageCreate.do"/>';
+	var params = new Object();
+	params.imgSrc = base64encodedstring;
+	params.fileName = "저장할 파일명";
+	
+	$.ajax(~);
